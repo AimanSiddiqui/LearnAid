@@ -1,0 +1,242 @@
+[
+  {
+    "id": "Q001",
+    "scenario": "You witness a person collapse in a U.S. shopping mall.",
+    "options": ["Call 911", "Call a friend", "Wait and observe", "Call 112"],
+    "correct_answer": "Call 911",
+    "explanation": "In the U.S., 911 connects to police, ambulance, and fire emergency services.",
+    "image": "scenario_01.png"
+  },
+  {
+    "id": "Q002",
+    "scenario": "A car crash happens on the highway in Germany.",
+    "options": ["Call 112", "Call 911", "Wait and observe", "Call a friend"],
+    "correct_answer": "Call 112",
+    "explanation": "112 is the emergency number for all EU countries, including Germany.",
+    "image": "scenario_02.png"
+  },
+  {
+    "id": "Q003",
+    "scenario": "A child is choking at school in Australia.",
+    "options": ["Call 000", "Wait and observe", "Call 911", "Call a friend"],
+    "correct_answer": "Call 000",
+    "explanation": "000 is Australia's emergency number for ambulance, fire, and police.",
+    "image": "scenario_03.png"
+  },
+  {
+    "id": "Q004",
+    "scenario": "You see smoke coming from a neighbor's flat in the UK.",
+    "options": ["Call 999", "Call 101", "Wait and observe", "Call a friend"],
+    "correct_answer": "Call 999",
+    "explanation": "999 is the UK's emergency number for active situations like fires.",
+    "image": "scenario_04.png"
+  },
+  {
+    "id": "Q005",
+    "scenario": "A player faints during a cricket match in India.",
+    "options": ["Call 108", "Call 102", "Wait and observe", "Call a friend"],
+    "correct_answer": "Call 108",
+    "explanation": "108 is India's integrated emergency response system for medical help.",
+    "image": "scenario_05.png"
+  },
+  {
+    "id": "Q006",
+    "scenario": "Your friend has a mild nosebleed but is talking and breathing normally.",
+    "options": ["Wait and observe", "Call 911", "Call 112", "Call a friend"],
+    "correct_answer": "Wait and observe",
+    "explanation": "Most nosebleeds are not emergencies unless prolonged or caused by trauma.",
+    "image": "scenario_06.png"
+  },
+  {
+    "id": "Q007",
+    "scenario": "Someone gets a minor paper cut in the library.",
+    "options": ["Wait and observe", "Call 911", "Call a friend", "Call 112"],
+    "correct_answer": "Wait and observe",
+    "explanation": "This is not an emergency; basic first-aid like a bandage is sufficient.",
+    "image": "scenario_07.png"
+  },
+  {
+    "id": "Q008",
+    "scenario": "A toddler is locked inside a hot car in Australia.",
+    "options": ["Call 000", "Wait and observe", "Call a friend", "Break the window"],
+    "correct_answer": "Call 000",
+    "explanation": "This is an emergency — high heat can be fatal; call emergency services.",
+    "image": "scenario_08.png"
+  },
+  {
+    "id": "Q009",
+    "scenario": "You see a person bleeding heavily after falling on sharp glass.",
+    "options": ["Call 911", "Call a friend", "Wait and observe", "Call 112"],
+    "correct_answer": "Call 911",
+    "explanation": "Severe bleeding is a medical emergency requiring immediate attention.",
+    "image": "scenario_09.png"
+  },
+  {
+    "id": "Q010",
+    "scenario": "A friend calls saying they're feeling very low and want to talk.",
+    "options": ["Call a friend", "Call 911", "Wait and observe", "Call their parents"],
+    "correct_answer": "Call a friend",
+    "explanation": "Offering emotional support is critical. Escalate if there’s risk of self-harm.",
+    "image": "scenario_10.png"
+  },
+  {
+    "id": "Q011",
+    "scenario": "At the beach, someone gets stung by a jellyfish. A lifeguard is nearby.",
+    "options": ["Call a lifeguard", "Call 911", "Wait and observe", "Call 112"],
+    "correct_answer": "Call a lifeguard",
+    "explanation": "Lifeguards are trained for marine stings and can treat or escalate based on severity.",
+    "image": "scenario_11.png"
+  },
+  {
+    "id": "Q012",
+    "scenario": "You’re hiking and your partner complains of mild dizziness but insists they’re okay.",
+    "options": ["Wait and observe", "Call 911", "Call a helicopter", "Call a friend"],
+    "correct_answer": "Wait and observe",
+    "explanation": "Mild dizziness may not require emergency help unless it worsens.",
+    "image": "scenario_12.png"
+  },
+  {
+    "id": "Q013",
+    "scenario": "Your classmate is coughing and sneezing but otherwise fine.",
+    "options": ["Wait and observe", "Call 911", "Call a friend", "Call school nurse"],
+    "correct_answer": "Wait and observe",
+    "explanation": "These are not emergency symptoms unless combined with severe respiratory distress.",
+    "image": "scenario_13.png"
+  },
+  {
+    "id": "Q014",
+    "scenario": "You find a lost and confused elderly person on the street in Germany.",
+    "options": ["Call 112", "Wait and observe", "Call a friend", "Call 911"],
+    "correct_answer": "Call 112",
+    "explanation": "Confusion may signal a health issue; emergency help is advised.",
+    "image": "scenario_14.png"
+  },
+  {
+    "id": "Q015",
+    "scenario": "A cyclist crashes and is bleeding but conscious and moving.",
+    "options": ["Call 999", "Call 101", "Call a friend", "Wait and observe"],
+    "correct_answer": "Call 999",
+    "explanation": "Bleeding after a crash should be assessed by professionals quickly.",
+    "image": "scenario_15.png"
+  },
+  {
+    "id": "Q016",
+    "scenario": "A child at a picnic scrapes their knee lightly and cries.",
+    "options": ["Wait and observe", "Call 911", "Call a lifeguard", "Call a friend"],
+    "correct_answer": "Wait and observe",
+    "explanation": "Minor scrapes can be treated on-site and monitored.",
+    "image": "scenario_16.png"
+  },
+  {
+    "id": "Q017",
+    "scenario": "You’re at a theme park and someone faints under the sun.",
+    "options": ["Call park medics", "Call 911", "Call a friend", "Wait and observe"],
+    "correct_answer": "Call park medics",
+    "explanation": "Use on-site support teams unless it becomes life-threatening.",
+    "image": "scenario_17.png"
+  },
+  {
+    "id": "Q018",
+    "scenario": "A stranger collapses and isn’t breathing.",
+    "options": ["Call 911", "Wait and observe", "Check for ID", "Call a friend"],
+    "correct_answer": "Call 911",
+    "explanation": "Unconscious and not breathing? Always call emergency services.",
+    "image": "scenario_18.png"
+  },
+  {
+    "id": "Q019",
+    "scenario": "You see someone on the sidewalk crying loudly but unharmed.",
+    "options": ["Wait and observe", "Call 911", "Call a friend", "Offer to help"],
+    "correct_answer": "Offer to help",
+    "explanation": "Offer support. Only escalate if they are at risk or ask for help.",
+    "image": "scenario_19.png"
+  },
+  {
+    "id": "Q020",
+    "scenario": "A lifeguard asks for help after someone collapses in water.",
+    "options": ["Call 911", "Call a friend", "Wait and observe", "Call the police"],
+    "correct_answer": "Call 911",
+    "explanation": "Follow lifeguard instructions and contact emergency services.",
+    "image": "scenario_20.png"
+  },
+  {
+    "id": "Q021",
+    "scenario": "A person next to you starts to choke in a restaurant.",
+    "options": ["Call 911", "Wait and observe", "Offer water", "Call a friend"],
+    "correct_answer": "Call 911",
+    "explanation": "Choking can become fatal fast — act immediately.",
+    "image": "scenario_21.png"
+  },
+  {
+    "id": "Q022",
+    "scenario": "Someone gets dizzy after spinning on a playground ride.",
+    "options": ["Wait and observe", "Call 911", "Call a lifeguard", "Call a friend"],
+    "correct_answer": "Wait and observe",
+    "explanation": "Temporary dizziness is not an emergency. Sit them down and check back.",
+    "image": "scenario_22.png"
+  },
+  {
+    "id": "Q023",
+    "scenario": "A person complains of chest pain and shortness of breath.",
+    "options": ["Call 911", "Wait and observe", "Call a friend", "Offer water"],
+    "correct_answer": "Call 911",
+    "explanation": "These are signs of a possible heart attack. Time is critical.",
+    "image": "scenario_23.png"
+  },
+  {
+    "id": "Q024",
+    "scenario": "You see a calm stray dog near your school.",
+    "options": ["Call animal services", "Call 911", "Wait and observe", "Call a friend"],
+    "correct_answer": "Call animal services",
+    "explanation": "This isn’t a human emergency, but should be reported to animal control.",
+    "image": "scenario_24.png"
+  },
+  {
+    "id": "Q025",
+    "scenario": "Your friend twists their ankle but can still walk with help.",
+    "options": ["Call a friend", "Wait and observe", "Call 911", "Call a lifeguard"],
+    "correct_answer": "Call a friend",
+    "explanation": "This doesn’t require an ambulance unless there’s serious pain or swelling.",
+    "image": "scenario_25.png"
+  },
+  {
+    "id": "Q026",
+    "scenario": "A person is unconscious and not breathing. No one else is around.",
+    "options": ["Call 911", "Call a friend", "Wait and observe", "Call 101"],
+    "correct_answer": "Call 911",
+    "explanation": "Critical emergency. You are the first responder until help arrives.",
+    "image": "scenario_26.png"
+  },
+  {
+    "id": "Q027",
+    "scenario": "A small trash can fire starts in a school hallway.",
+    "options": ["Call 911", "Wait and observe", "Tell a teacher", "Call a friend"],
+    "correct_answer": "Call 911",
+    "explanation": "Fires can spread rapidly; don’t wait.",
+    "image": "scenario_27.png"
+  },
+  {
+    "id": "Q028",
+    "scenario": "A bee stings your hand and it swells slightly.",
+    "options": ["Wait and observe", "Call 911", "Call a friend", "Call animal services"],
+    "correct_answer": "Wait and observe",
+    "explanation": "Unless there’s an allergic reaction, observe and apply basic care.",
+    "image": "scenario_28.png"
+  },
+  {
+    "id": "Q029",
+    "scenario": "You see someone running and fall, scraping their knee badly.",
+    "options": ["Wait and observe", "Call 911", "Call a friend", "Offer help"],
+    "correct_answer": "Offer help",
+    "explanation": "Not an emergency. First-aid and reassurance is enough.",
+    "image": "scenario_29.png"
+  },
+  {
+    "id": "Q030",
+    "scenario": "Your sibling gets a mild burn from a hot pan.",
+    "options": ["Wait and observe", "Call 911", "Call a friend", "Call 101"],
+    "correct_answer": "Wait and observe",
+    "explanation": "Mild burns can be managed at home. Escalate if worsening or blistering.",
+    "image": "scenario_30.png"
+  }
+]
