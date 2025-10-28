@@ -27,10 +27,17 @@ const CoursesScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
   const dispatch = useAppDispatch();
   const { list: courses, loading, error } = useAppSelector((state) => state.courses);
+  const [refreshing, setRefreshing] = React.useState(false);
 
   useEffect(() => {
     dispatch(fetchCourses());
   }, [dispatch]);
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await dispatch(fetchCourses());
+    setRefreshing(false);
+  };
 
   const renderCourse = ({ item }: { item: typeof courses[0] }) => (
     <View style={[styles.card, { width: cardWidth }]}> 
@@ -67,8 +74,8 @@ const CoursesScreen: React.FC = () => {
           columnWrapperStyle={styles.row}
           contentContainerStyle={styles.gridContent}
           showsVerticalScrollIndicator={false}
-          refreshing={loading}
-          onRefresh={() => dispatch(fetchCourses())}
+          refreshing={refreshing}
+          onRefresh={handleRefresh}
         />
       )}
     </SafeAreaView>

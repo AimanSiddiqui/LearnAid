@@ -20,51 +20,62 @@ export interface CourseOverviewData {
 
 interface Props {
   data: CourseOverviewData;
+  onStart?: () => void;
 }
 
-const CourseOverviewScreen: React.FC<Props> = ({ data }) => {
+const CourseOverviewScreen: React.FC<Props> = ({ data, onStart }) => {
+  console.log(data)
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>{data.title}</Text>
-        <View style={styles.headerIcons}>
-          <Text style={styles.headerProfileIcon}>👤</Text>
+    <>
+      <ScrollView contentContainerStyle={styles.container}>
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>{data.title}</Text>
+          <View style={styles.headerIcons}>
+            <Text style={styles.headerProfileIcon}>👤</Text>
+          </View>
         </View>
-      </View>
-      <Text style={styles.subtitle}>{data.subtitle}</Text>
-      <Text style={styles.description}>{data.description}</Text>
-      {data.sections.map((section, idx) => {
-        if (section.highlight) {
-          return (
-            <View key={idx} style={[styles.sectionCard, styles.sectionHighlight]}> 
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
-                <Ionicons name="time-outline" size={22} color="#fff" style={{ marginRight: 10 }} />
-                <Text style={styles.sectionHighlightText}>{section.title}</Text>
+        <Text style={styles.subtitle}>{data.subtitle}</Text>
+        <Text style={styles.description}>{data.description}</Text>
+        {data.sections.map((section, idx) => {
+          if (section.highlight) {
+            return (
+              <View key={idx} style={[styles.sectionCard, styles.sectionHighlight]}> 
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                  <Ionicons name="time-outline" size={22} color="#fff" style={{ marginRight: 10 }} />
+                  <Text style={styles.sectionHighlightText}>{section.title}</Text>
+                </View>
+                <Text style={styles.sectionHighlightSub}>{section.text}</Text>
               </View>
-              <Text style={styles.sectionHighlightSub}>{section.text}</Text>
+            );
+          }
+          return (
+            <View key={idx} style={styles.sectionCard}> 
+              {section.icon && (
+                <View style={styles.sectionIconCircle}>
+                  <Text style={styles.sectionIcon}>{section.icon}</Text>
+                </View>
+              )}
+              {section.image && <Image source={section.image} style={styles.sectionImage} resizeMode="contain" />}
+              {section.title && <Text style={styles.sectionTitle}>{section.title}</Text>}
+              {section.text && <Text style={styles.sectionText}>{section.text}</Text>}
+              {section.cta && (
+                <TouchableOpacity style={styles.ctaButton} onPress={section.cta.onPress}>
+                  <Text style={styles.ctaButtonText}>{section.cta.label}</Text>
+                </TouchableOpacity>
+              )}
             </View>
           );
-        }
-        return (
-          <View key={idx} style={styles.sectionCard}> 
-            {section.icon && (
-              <View style={styles.sectionIconCircle}>
-                <Text style={styles.sectionIcon}>{section.icon}</Text>
-              </View>
-            )}
-            {section.image && <Image source={section.image} style={styles.sectionImage} resizeMode="contain" />}
-            {section.title && <Text style={styles.sectionTitle}>{section.title}</Text>}
-            {section.text && <Text style={styles.sectionText}>{section.text}</Text>}
-            {section.cta && (
-              <TouchableOpacity style={styles.ctaButton} onPress={section.cta.onPress}>
-                <Text style={styles.ctaButtonText}>{section.cta.label}</Text>
-              </TouchableOpacity>
-            )}
-          </View>
-        );
-      })}
-    </ScrollView>
+        })}
+      </ScrollView>
+      {onStart && (
+        <View style={{ padding: 20, backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: '#eee' }}>
+          <TouchableOpacity style={styles.ctaButton} onPress={onStart}>
+            <Text style={styles.ctaButtonText}>Start <Ionicons name="arrow-forward" size={16} color="#fff" /></Text>
+          </TouchableOpacity>
+        </View>
+      )}
+    </>
   );
 };
 

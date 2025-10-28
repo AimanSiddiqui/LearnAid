@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { CourseListItem, getCourses } from '../../services/coursesService';
+import { getCourses } from '../../services/coursesService';
+import { CourseListItem } from '../../types/auth';
 
 interface CoursesState {
   list: CourseListItem[];
@@ -13,8 +14,32 @@ const initialState: CoursesState = {
   error: null,
 };
 
+const COURSE_ICON_MAP: Record<string, { icon: string; iconBg: string; iconColor: string }> = {
+  'CPR': {
+    icon: 'heart-outline',
+    iconBg: '#ffeaea',
+    iconColor: '#e53935',
+  },
+  'Emergency First Aid': {
+    icon: 'shield-checkmark-outline',
+    iconBg: '#e3f0ff',
+    iconColor: '#1976d2',
+  },
+  'Basic Wound Care': {
+    icon: 'medkit-outline',
+    iconBg: '#eafaf1',
+    iconColor: '#43a047',
+  },
+  'Disaster Preparedness': {
+    icon: 'flask-outline',
+    iconBg: '#f3eaff',
+    iconColor: '#8e24aa',
+  },
+};
+
 export const fetchCourses = createAsyncThunk('courses/fetchCourses', async () => {
-  return await getCourses();
+let result = await getCourses();
+  return result
 });
 
 const coursesSlice = createSlice({
@@ -29,7 +54,10 @@ const coursesSlice = createSlice({
       })
       .addCase(fetchCourses.fulfilled, (state, action) => {
         state.loading = false;
-        state.list = action.payload;
+        state.list = action.payload.map((course: any) => ({
+          ...course,
+          ...(COURSE_ICON_MAP[course.title] || {}),
+        }));
       })
       .addCase(fetchCourses.rejected, (state, action) => {
         state.loading = false;
