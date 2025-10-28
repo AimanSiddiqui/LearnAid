@@ -1,11 +1,13 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React, { useEffect } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import CourseOverviewEntry from '../screens/courses/CourseOverviewEntry';
+import CourseStepsScreen from '../screens/courses/CourseStepsScreen';
 import EmergencyReactionScreen from '../screens/emergency/EmergencyReactionScreen';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { checkAuthStatus } from '../store/slices/authSlice';
+import { setToken, setUser } from '../store/slices/authSlice';
 import AuthNavigator from './AuthNavigator';
 import MainTabNavigator from './MainTabNavigator';
 
@@ -14,6 +16,7 @@ export type RootStackParamList = {
   MainTabs: undefined;
   EmergencyReaction: undefined;
   CourseOverview: { id: string };
+  CourseSteps: { courseId: string; title?: string };
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -24,7 +27,15 @@ const AppNavigator: React.FC = () => {
 
   useEffect(() => {
     // Check authentication status when app starts
-    dispatch(checkAuthStatus());
+    const checkAuth = async () => {
+      const token = await AsyncStorage.getItem('authToken');
+      const user = await AsyncStorage.getItem('user');
+      if (token && user) {
+        dispatch(setToken(token));
+        dispatch(setUser(JSON.parse(user)));
+      }
+    };
+    checkAuth();
   }, [dispatch]);
 
   if (isLoading) {
@@ -43,6 +54,7 @@ const AppNavigator: React.FC = () => {
             <Stack.Screen name="MainTabs" component={MainTabNavigator} />
             <Stack.Screen name="EmergencyReaction" component={EmergencyReactionScreen} />
             <Stack.Screen name="CourseOverview" component={CourseOverviewEntry} />
+            <Stack.Screen name="CourseSteps" component={CourseStepsScreen} />
           </>
         ) : (
           <Stack.Screen name="Auth" component={AuthNavigator} />

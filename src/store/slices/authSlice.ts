@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import authService from '../../services/authService';
 import { AuthState, LoginCredentials, SignupCredentials, User } from '../../types/auth';
@@ -8,7 +9,7 @@ export const loginUser = createAsyncThunk(
   async (credentials: LoginCredentials, { rejectWithValue }) => {
     try {
       const response = await authService.login(credentials);
-      return response;
+      return response.data;
     } catch (error) {
       return rejectWithValue(error instanceof Error ? error.message : 'Login failed');
     }
@@ -19,37 +20,10 @@ export const signupUser = createAsyncThunk(
   'auth/signup',
   async (credentials: SignupCredentials, { rejectWithValue }) => {
     try {
-      const response = await authService.signup(credentials);
-      return response;
+      const response = await authService.register(credentials);
+      return response.data;
     } catch (error) {
       return rejectWithValue(error instanceof Error ? error.message : 'Signup failed');
-    }
-  }
-);
-
-export const logoutUser = createAsyncThunk(
-  'auth/logout',
-  async (_, { rejectWithValue }) => {
-    try {
-      await authService.logout();
-    } catch (error) {
-      return rejectWithValue(error instanceof Error ? error.message : 'Logout failed');
-    }
-  }
-);
-
-export const checkAuthStatus = createAsyncThunk(
-  'auth/checkStatus',
-  async (_, { rejectWithValue }) => {
-    try {
-      const isAuthenticated = await authService.isAuthenticated();
-      if (isAuthenticated) {
-        const user = await authService.getCurrentUser();
-        return user;
-      }
-      return null;
-    } catch (error) {
-      return rejectWithValue(error instanceof Error ? error.message : 'Auth check failed');
     }
   }
 );
@@ -71,11 +45,11 @@ const authSlice = createSlice({
     clearError: (state) => {
       state.error = null;
     },
-    setUser: (state, action: PayloadAction<User>) => {
+    setUser: (state, action: PayloadAction<User|null>) => {
       state.user = action.payload;
-      state.isAuthenticated = true;
+      state.isAuthenticated = !!action.payload;
     },
-    setToken: (state, action: PayloadAction<string>) => {
+    setToken: (state, action: PayloadAction<string|null>) => {
       state.token = action.payload;
     },
   },
@@ -92,14 +66,15 @@ const authSlice = createSlice({
         state.token = action.payload.token;
         state.isAuthenticated = true;
         state.error = null;
+        // Save token and user to AsyncStorage
+        AsyncStorage.setItem('authToken', action.payload.token);
+        AsyncStorage.setItem('user', JSON.stringify(action.payload.user));
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
-      });
-
-    // Signup
-    builder
+      })
+      // Signup
       .addCase(signupUser.pending, (state) => {
         state.isLoading = true;
         state.error = null;
@@ -110,45 +85,11 @@ const authSlice = createSlice({
         state.token = action.payload.token;
         state.isAuthenticated = true;
         state.error = null;
+        // Save token and user to AsyncStorage
+        AsyncStorage.setItem('authToken', action.payload.token);
+        AsyncStorage.setItem('user', JSON.stringify(action.payload.user));
       })
       .addCase(signupUser.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload as string;
-      });
-
-    // Logout
-    builder
-      .addCase(logoutUser.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(logoutUser.fulfilled, (state) => {
-        state.isLoading = false;
-        state.user = null;
-        state.token = null;
-        state.isAuthenticated = false;
-        state.error = null;
-      })
-      .addCase(logoutUser.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload as string;
-      });
-
-    // Check auth status
-    builder
-      .addCase(checkAuthStatus.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(checkAuthStatus.fulfilled, (state, action) => {
-        state.isLoading = false;
-        if (action.payload) {
-          state.user = action.payload;
-          state.isAuthenticated = true;
-        } else {
-          state.user = null;
-          state.isAuthenticated = false;
-        }
-      })
-      .addCase(checkAuthStatus.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
       });

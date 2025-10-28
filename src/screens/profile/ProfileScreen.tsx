@@ -1,14 +1,17 @@
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React from 'react';
 import {
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View
+  Modal,
+  Pressable,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { logoutUser } from '../../store/slices/authSlice';
+import { setToken, setUser } from '../../store/slices/authSlice';
 import { styles } from './styles';
 
 const ProfileScreen: React.FC = () => {
@@ -16,8 +19,16 @@ const ProfileScreen: React.FC = () => {
   const { user } = useAppSelector((state) => state.auth);
   const insets = useSafeAreaInsets();
 
-  const handleLogout = () => {
-    dispatch(logoutUser());
+  const [modalVisible, setModalVisible] = React.useState(false);
+
+  const handleShowNotImplemented = () => setModalVisible(true);
+  const handleCloseModal = () => setModalVisible(false);
+
+  const handleLogout = async () => {
+    await AsyncStorage.multiRemove(['authToken', 'user']);
+    dispatch(setUser(null));
+    dispatch(setToken(null));
+    // Optionally navigate to Auth screen if navigation is available
   };
 
   const menuItems = [
@@ -25,36 +36,54 @@ const ProfileScreen: React.FC = () => {
       id: '1',
       title: 'Edit Profile',
       icon: 'person-outline',
-      onPress: () => console.log('Edit Profile'),
+      onPress: handleShowNotImplemented,
     },
     {
       id: '2',
       title: 'Notifications',
       icon: 'notifications-outline',
-      onPress: () => console.log('Notifications'),
+      onPress: handleShowNotImplemented,
     },
     {
       id: '3',
       title: 'Privacy & Security',
       icon: 'shield-outline',
-      onPress: () => console.log('Privacy & Security'),
+      onPress: handleShowNotImplemented,
     },
     {
       id: '4',
       title: 'Help & Support',
       icon: 'help-circle-outline',
-      onPress: () => console.log('Help & Support'),
+      onPress: handleShowNotImplemented,
     },
     {
       id: '5',
       title: 'About',
       icon: 'information-circle-outline',
-      onPress: () => console.log('About'),
+      onPress: handleShowNotImplemented,
     },
   ];
 
   return (
     <View style={styles.container}>
+      {/* Not Implemented Modal */}
+      <Modal
+        visible={modalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={handleCloseModal}
+      >
+        <Pressable style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.3)', justifyContent: 'center', alignItems: 'center' }} onPress={handleCloseModal}>
+          <View style={{ backgroundColor: '#fff', borderRadius: 16, padding: 28, minWidth: 220, alignItems: 'center' }}>
+            <Ionicons name="alert-circle-outline" size={40} color="#007AFF" style={{ marginBottom: 10 }} />
+            <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 8 }}>Not implemented yet</Text>
+            <Text style={{ color: '#666', textAlign: 'center', marginBottom: 16 }}>This feature is coming soon!</Text>
+            <TouchableOpacity onPress={handleCloseModal} style={{ backgroundColor: '#007AFF', borderRadius: 8, paddingVertical: 8, paddingHorizontal: 24 }}>
+              <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 16 }}>OK</Text>
+            </TouchableOpacity>
+          </View>
+        </Pressable>
+      </Modal>
       <View style={[styles.header, { paddingTop: insets.top }]}>
         <Text style={styles.title}>Profile</Text>
         <TouchableOpacity style={styles.settingsButton}>
@@ -85,7 +114,7 @@ const ProfileScreen: React.FC = () => {
         </View>
 
         {/* Stats */}
-        <View style={styles.statsSection}>
+        {/* <View style={styles.statsSection}>
           <View style={styles.statItem}>
             <Text style={styles.statNumber}>12</Text>
             <Text style={styles.statLabel}>Courses</Text>
@@ -100,7 +129,7 @@ const ProfileScreen: React.FC = () => {
             <Text style={styles.statNumber}>156</Text>
             <Text style={styles.statLabel}>Hours</Text>
           </View>
-        </View>
+        </View> */}
 
         {/* Menu Items */}
         <View style={styles.menuSection}>

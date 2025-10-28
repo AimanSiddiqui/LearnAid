@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React from 'react';
 import {
     Alert,
@@ -8,7 +9,7 @@ import {
     View,
 } from 'react-native';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { logoutUser } from '../store/slices/authSlice';
+import { setToken, setUser } from '../store/slices/authSlice';
 
 const MainTabsScreen: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -28,7 +29,10 @@ const MainTabsScreen: React.FC = () => {
           style: 'destructive',
           onPress: async () => {
             try {
-              await dispatch(logoutUser()).unwrap();
+              await AsyncStorage.multiRemove(['authToken', 'user']);
+              dispatch(setUser(null));
+              dispatch(setToken(null));
+              // Optionally navigate to Auth screen if navigation is available
             } catch (error) {
               Alert.alert('Error', 'Failed to logout. Please try again.');
             }

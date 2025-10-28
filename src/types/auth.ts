@@ -31,4 +31,14 @@ export interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
+}
+
+// Course list item type for course cards
+export interface CourseListItem {
+  id: string;
+  icon: string;
+  iconBg: string;
+  iconColor: string;
+  title: string;
+  description: string;
 } 
