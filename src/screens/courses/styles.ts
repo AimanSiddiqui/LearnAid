@@ -40,7 +40,7 @@ export const styles = StyleSheet.create({
   iconCircle: {
     width: 48,
     height: 48,
-    borderRadius: 24,
+    borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 12,

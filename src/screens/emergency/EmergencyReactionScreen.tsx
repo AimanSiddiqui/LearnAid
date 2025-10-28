@@ -1,23 +1,14 @@
 import { Ionicons } from '@expo/vector-icons';
-import * as FileSystem from 'expo-file-system';
-import React, { useEffect, useState } from 'react';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import LottieView from 'lottie-react-native';
+import React, { useEffect, useRef, useState } from 'react';
 import { Dimensions, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { exitQuizMode, fetchScenarios, goToNextScenario, goToPrevScenario, resetScenarios, selectRandomScenarios, submitScenarioAnswer, submitScenarioAttempt } from '../../store/slices/scenarioSlice';
 import { styles } from './EmergencyReactionScreen.styles';
 import { OptionButton } from './OptionButton';
 import { ScenarioModal } from './ScenarioModal';
 
-const DATA_PATH = FileSystem.bundleDirectory + 'assets/data/emergency_scenarios.json';
-
-interface Scenario {
-  id: string;
-  scenario: string;
-  options: string[];
-  correct_answer: string;
-  explanation: string;
-  image?: string;
-}
-
-// Static mapping for scenario images
 const scenarioImages: { [key: string]: any } = {
   'scenario_01.png': require('../../../assets/images/scenarios/scenario_01.png'),
   'scenario_02.png': require('../../../assets/images/scenarios/scenario_02.png'),
@@ -52,51 +43,110 @@ const scenarioImages: { [key: string]: any } = {
 };
 
 const screenWidth = Dimensions.get('window').width;
-const imageHorizontalPadding = 0; // 20 left + 20 right from container padding
+const imageHorizontalPadding = 0;
 const imageWidth = screenWidth - imageHorizontalPadding;
 const imageHeight = Math.round(imageWidth * 3 / 4);
 
 const EmergencyReactionScreen: React.FC = () => {
-  const [scenarios, setScenarios] = useState<Scenario[]>([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const route = useRoute();
+  const dispatch = useAppDispatch();
+  const { scenarios, quizScenarios, quizMode: quizMode, currentScenarioIndex, completed, loading, error } = useAppSelector((state) => state.scenarios);
   const [selected, setSelected] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [completed, setCompleted] = useState(false);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const { user } = useAppSelector((state) => state.auth);
+  const quizStartedRef = useRef(false);
+  const navigation = useNavigation();
 
   useEffect(() => {
-    try {
-      const data = require('../../../assets/data/emergency_scenarios.json');
-      setScenarios(data);
-    } catch (e) {
-      setScenarios([]);
+    dispatch(resetScenarios());
+    quizStartedRef.current = false;
+    dispatch(fetchScenarios());
+    return () => { dispatch(resetScenarios()); };
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (
+      route.params && (route.params as any).quizMode &&
+      !quizStartedRef.current &&
+      scenarios.length > 0 &&
+      !quizMode
+    ) {
+      dispatch(selectRandomScenarios(5));
+      quizStartedRef.current = true;
     }
-  }, []);
+  }, [route.params, dispatch, scenarios.length, quizMode]);
 
-  const scenario = scenarios[currentIndex];
+  useEffect(() => {
+    setSelected(null);
+    setShowModal(false);
+    setIsCorrect(null);
+  }, [currentScenarioIndex]);
 
-  if (!scenario && !completed) {
+  // Handler to start quiz mode (call this on 'Know Who to Call' button)
+  const startQuiz = () => {
+    dispatch(selectRandomScenarios(5));
+  };
+
+  if (loading) {
     return <View style={styles.center}><Text>Loading...</Text></View>;
   }
+  if (error) {
+    return <View style={styles.center}><Text style={{ color: '#e53935' }}>{error}</Text></View>;
+  }
+  if (!scenarios.length && !completed) {
+    return <View style={styles.center}><Text>No scenarios found.</Text></View>;
+  }
+
+  const activeList = quizScenarios;
+  const scenario = activeList[currentScenarioIndex];
+  const isLast = currentScenarioIndex === activeList.length - 1;
 
   const handleSelect = (option: string) => {
     setSelected(option);
     setIsCorrect(option === scenario.correct_answer);
-    setTimeout(() => setShowModal(true), 500);
+    dispatch(submitScenarioAnswer({ scenarioId: scenario.id, answer: option }));
+    // setTimeout(() => setShowModal(true), 500);
   };
 
-  const handleNext = () => {
-    if (currentIndex < scenarios.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-      setSelected(null);
-      setShowModal(false);
-      setIsCorrect(null);
-    } else {
-      setCompleted(true);
+  const handleModalClose = () => {
+    dispatch(submitScenarioAttempt({
+      user_id: user?.id || 'anonymous',
+      scenario_id: scenario.id,
+      selected_option: selected!,
+      is_correct: selected === scenario.correct_answer,
+      attempted_at: new Date().toISOString(),
+    }));
+    setShowModal(false);
+    setSelected(null);
+    setIsCorrect(null);
+    dispatch(goToNextScenario());
+  };
+
+  if (completed || currentScenarioIndex >= activeList.length) {
+    if (quizMode) {
+      return (
+        <View style={styles.center}>
+          <LottieView
+            source={require('../../../assets/animations/hurrah.json')}
+            autoPlay
+            loop={false}
+            style={{ width: 180, height: 180, marginBottom: 0 }}
+          />
+          <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#045fb5', marginBottom: 12, marginTop: 12, textAlign: 'center' }}>Yayyy, you've got this!</Text>
+          <Text style={{ fontSize: 16, color: '#666', textAlign: 'center', marginBottom: 24 }}>You completed 5 random emergency scenarios.</Text>
+          <TouchableOpacity
+            style={{ backgroundColor: '#045fb5', borderRadius: 24, paddingVertical: 14, paddingHorizontal: 40 }}
+            onPress={() => {
+              dispatch(exitQuizMode());
+              navigation.reset({ index: 0, routes: [{ name: 'MainTabs', params: { screen: 'Home' } }] });
+            }}
+          >
+            <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 18 }}>Back to Home</Text>
+          </TouchableOpacity>
+        </View>
+      );
     }
-  };
-
-  if (completed) {
     return (
       <View style={styles.center}>
         <Ionicons name="checkmark-circle" size={64} color="#43a047" style={{ marginBottom: 16 }} />
@@ -104,6 +154,10 @@ const EmergencyReactionScreen: React.FC = () => {
         <Text style={{ fontSize: 16, color: '#666', textAlign: 'center' }}>Great job! You have finished all emergency scenarios.</Text>
       </View>
     );
+  }
+
+  if (!scenario) {
+    return null;
   }
 
   return (
@@ -118,9 +172,7 @@ const EmergencyReactionScreen: React.FC = () => {
         </View>
       </View>
 
-      {/* Scenario Title & Description */}
-      <Text style={styles.scenarioTitle}>Scenario {currentIndex + 1}:</Text>
-      {/* Scenario Image */}
+      <Text style={styles.scenarioTitle}>Scenario {currentScenarioIndex + 1} of {activeList.length}:</Text>
       {scenario.image && scenarioImages[scenario.image] ? (
         <View style={{ alignItems: 'center', marginBottom: 14 }}>
           <Image
@@ -136,53 +188,41 @@ const EmergencyReactionScreen: React.FC = () => {
       )}
       <Text style={styles.scenarioDesc}>{scenario.scenario}</Text>
 
-      {/* Card with options */}
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>What will you do ?</Text>
-        {/* (Optional) Image can go here */}
-        {/* Options */}
-        {scenario.options.map((option, idx) => (
-          <OptionButton
-            key={option}
-            label={String.fromCharCode(65 + idx)}
-            text={option}
-            selected={!!selected}
-            correct={selected === option && option === scenario.correct_answer}
-            wrong={selected === option && option !== scenario.correct_answer}
-            onPress={() => !selected && handleSelect(option)}
-          />
-        ))}
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: 12 }}>
-          <TouchableOpacity
-            style={[styles.nextButton, { backgroundColor: '#bbb', flex: 1, opacity: currentIndex === 0 ? 0.5 : 1 }]}
-            disabled={currentIndex === 0}
-            onPress={() => {
-              if (currentIndex > 0) {
-                setCurrentIndex(currentIndex - 1);
-                setSelected(null);
-                setShowModal(false);
-                setIsCorrect(null);
-              }
-            }}
-          >
-            <Text style={styles.nextButtonText}><Ionicons name="arrow-back" size={16} color="#fff" />  Back</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.nextButton, { backgroundColor: '#045fb5', flex: 1, opacity: selected ? 1 : 0.5 }]}
-            disabled={!selected}
-            onPress={handleNext}
-          >
-            <Text style={styles.nextButtonText}>Next  <Ionicons name="arrow-forward" size={16} color="#fff" /></Text>
-          </TouchableOpacity>
-        </View>
+      <Text style={styles.cardTitle}>What will you do ?</Text>
+      {scenario.options.map((option, idx) => (
+        <OptionButton
+          key={option}
+          label={String.fromCharCode(65 + idx)}
+          text={option}
+          selected={!!selected}
+          correct={selected === option && option === scenario.correct_answer}
+          wrong={selected === option && option !== scenario.correct_answer}
+          onPress={() => !selected && handleSelect(option)}
+        />
+      ))}
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: 12 }}>
+        <TouchableOpacity
+          style={[styles.nextButton, { backgroundColor: '#bbb', flex: 1, opacity: currentScenarioIndex === 0 ? 0.5 : 1 }]}
+          disabled={currentScenarioIndex === 0}
+          onPress={() => dispatch(goToPrevScenario())}
+        >
+          <Text style={styles.nextButtonText}><Ionicons name="arrow-back" size={16} color="#fff" />  Back</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.nextButton, { backgroundColor: '#045fb5', flex: 1, opacity: selected ? 1 : 0.5 }]}
+          disabled={!selected}
+          onPress={() => setShowModal(true)}
+        >
+          <Text style={styles.nextButtonText}>{isLast ? 'Finish' : 'Next'}  <Ionicons name="arrow-forward" size={16} color="#fff" /></Text>
+        </TouchableOpacity>
       </View>
 
       <ScenarioModal
         isVisible={showModal}
         isCorrect={isCorrect}
         explanation={scenario.explanation}
-        onClose={() => setShowModal(false)}
-        currentIndex={currentIndex}
+        onClose={handleModalClose}
+        currentIndex={currentScenarioIndex}
         selected={selected}
       />
     </ScrollView>
